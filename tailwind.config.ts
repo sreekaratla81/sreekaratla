@@ -1,13 +1,12 @@
 import type { Config } from "tailwindcss";
 import plugin from "tailwindcss/plugin";
 
-const config: Config = {
+export default {
   darkMode: "class",
   content: [
-    "./app/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx,mdx}",
     "./components/**/*.{ts,tsx}",
-    "./content/**/*.{md,mdx}",
-    "./lib/**/*.{ts,tsx}"
+    "./content/**/*.{md,mdx}"
   ],
   theme: {
     extend: {
@@ -35,7 +34,7 @@ const config: Config = {
             color: "hsl(var(--foreground))",
             a: {
               color: "hsl(var(--accent))",
-              '&:hover': {
+              "&:hover": {
                 color: "hsl(var(--accent))"
               }
             }
@@ -44,9 +43,10 @@ const config: Config = {
       }
     }
   },
-  plugins: [require("@tailwindcss/typography"), plugin(({ addVariant }) => {
-    addVariant("hocus", ["&:hover", "&:focus-visible"]);
-  })]
-};
-
-export default config;
+  plugins: [
+    require("@tailwindcss/typography"),
+    plugin(({ addVariant }) => {
+      addVariant("hocus", ["&:hover", "&:focus-visible"]);
+    })
+  ]
+} satisfies Config;

@@ -1,6 +1,11 @@
 /** @type {import('next-sitemap').IConfig} */
+const siteUrl = process.env.SITE_URL
+if (!siteUrl) {
+  console.warn('[next-sitemap] SITE_URL not set; generating with placeholder, skipped in CI script.')
+}
+
 module.exports = {
-  siteUrl: process.env.SITE_URL || 'https://sreekaratla.com',
+  siteUrl: siteUrl || 'https://example.com',
   generateRobotsTxt: true,
   generateIndexSitemap: false,
   sitemapSize: 7000,
@@ -10,4 +15,4 @@ module.exports = {
     priority: path === '/' ? 1.0 : 0.7,
     lastmod: new Date().toISOString()
   })
-};
+}

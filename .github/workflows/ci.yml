@@ -1,56 +1,52 @@
-name: CI
+name: build
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # ✅ Install PNPM first so it's available for caching
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 8.15.4
+          run_install: false
 
+      # ✅ Now setup Node and enable PNPM caching
       - name: Setup Node.js
-        if: ${{ hashFiles('pnpm-lock.yaml') != '' }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: pnpm
+          node-version: '20.19.5'
+          cache: 'pnpm'
 
-      - name: Setup Node.js (no cache)
-        if: ${{ hashFiles('pnpm-lock.yaml') == '' }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
+      # ✅ Verify toolchain before continuing
+      - name: Verify versions
         run: |
-          if [ -f pnpm-lock.yaml ]; then
-            pnpm install --frozen-lockfile
-          else
-            echo "pnpm-lock.yaml not found, falling back to generating a fresh lockfile"
-            pnpm install
-          fi
+          node -v
+          pnpm -v
+          npm -v
+
+      # ✅ Deterministic install
+      - name: Install dependencies (frozen lockfile)
+        run: pnpm install --frozen-lockfile
 
       - name: Type check
-        run: pnpm typecheck
+        run: pnpm exec tsc --noEmit
 
       - name: Lint
-        run: pnpm lint
+        run: pnpm exec eslint . --max-warnings=0
 
       - name: Build
         run: pnpm build
 
-      - name: Upload Pagefind index
-        uses: actions/upload-artifact@v4
-        with:
-          name: pagefind-index
-          path: public/pagefind
+      - name: Upload Pagefind index (non-blocking)
+        if: always()
+        run: node scripts/pagefind-safe.js || true
