@@ -1,29 +1,40 @@
 name: build
 
 on:
-  pull_request:
   push:
     branches: [ main ]
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.19.5'
-          cache: 'pnpm'
-
+      # ✅ Install PNPM first so it's available for caching
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 8.15.4
           run_install: false
 
+      # ✅ Now setup Node and enable PNPM caching
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.5'
+          cache: 'pnpm'
+
+      # ✅ Verify toolchain before continuing
+      - name: Verify versions
+        run: |
+          node -v
+          pnpm -v
+          npm -v
+
+      # ✅ Deterministic install
       - name: Install dependencies (frozen lockfile)
         run: pnpm install --frozen-lockfile
 
