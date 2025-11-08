@@ -4,6 +4,8 @@ command = "corepack enable && corepack prepare pnpm@9.12.0 --activate && pnpm in
 
 [build.environment]
 NODE_VERSION = "20.19.5"
+NPM_CONFIG_REGISTRY = "https://registry.npmjs.org/"
+PNPM_HOME = "/opt/buildhome/.pnpm"
 
 [[plugins]]
 package = "@netlify/plugin-nextjs"

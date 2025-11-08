@@ -1,41 +1,33 @@
 name: build
-
 on:
-  push:
-    branches: [ main ]
   pull_request:
+  push: { branches: [ main ] }
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # ✅ Install PNPM first so it's available for caching
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9.12.0
           run_install: false
 
-      # ✅ Now setup Node and enable PNPM caching
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.19.5'
           cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org/'
 
-      # ✅ Verify toolchain before continuing
-      - name: Verify versions
+      - name: Verify toolchain
         run: |
           node -v
           pnpm -v
-          npm -v
 
-      # ✅ Deterministic install
-      - name: Install dependencies (frozen lockfile)
+      - name: Install (frozen)
         run: pnpm install --frozen-lockfile
 
       - name: Type check
@@ -47,6 +39,6 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Upload Pagefind index (non-blocking)
+      - name: Pagefind (non-blocking)
         if: always()
         run: node scripts/pagefind-safe.js || true
