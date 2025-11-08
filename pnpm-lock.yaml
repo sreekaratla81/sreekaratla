@@ -1,0 +1,82 @@
+lockfileVersion: '9.0'
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+importers:
+  .:
+    specifiers:
+      '@headlessui/react': 1.7.18
+      '@heroicons/react': 2.1.5
+      '@radix-ui/react-icons': 1.3.0
+      '@tailwindcss/typography': 0.5.10
+      '@types/node': 20.12.7
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
+      '@vercel/og': 0.6.1
+      autoprefixer: 10.4.17
+      clsx: 2.1.1
+      contentlayer: 0.3.4
+      date-fns: 3.6.0
+      eslint: 8.57.0
+      eslint-config-next: 14.2.5
+      framer-motion: 11.0.17
+      husky: 9.0.11
+      lint-staged: 15.2.2
+      lucide-react: 0.407.0
+      next: 14.2.5
+      next-contentlayer: 0.3.4
+      next-sitemap: 4.2.3
+      next-themes: 0.2.1
+      pagefind: 1.1.1
+      postcss: 8.4.38
+      prettier: 3.2.5
+      reading-time: 1.5.0
+      rehype-autolink-headings: 7.1.3
+      rehype-slug: 6.0.0
+      remark-gfm: 4.0.0
+      react: 18.2.0
+      react-dom: 18.2.0
+      rss: 1.2.2
+      satori: 0.11.2
+      tailwind-merge: 2.2.2
+      tailwindcss: 3.4.3
+      typescript: 5.4.5
+    dependencies:
+      '@headlessui/react': 1.7.18
+      '@heroicons/react': 2.1.5
+      '@radix-ui/react-icons': 1.3.0
+      '@tailwindcss/typography': 0.5.10
+      '@vercel/og': 0.6.1
+      clsx: 2.1.1
+      contentlayer: 0.3.4
+      date-fns: 3.6.0
+      framer-motion: 11.0.17
+      lucide-react: 0.407.0
+      next: 14.2.5
+      next-contentlayer: 0.3.4
+      next-sitemap: 4.2.3
+      next-themes: 0.2.1
+      reading-time: 1.5.0
+      rehype-autolink-headings: 7.1.3
+      rehype-slug: 6.0.0
+      remark-gfm: 4.0.0
+      react: 18.2.0
+      react-dom: 18.2.0
+      rss: 1.2.2
+      satori: 0.11.2
+      tailwind-merge: 2.2.2
+    devDependencies:
+      '@types/node': 20.12.7
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
+      autoprefixer: 10.4.17
+      eslint: 8.57.0
+      eslint-config-next: 14.2.5
+      husky: 9.0.11
+      lint-staged: 15.2.2
+      pagefind: 1.1.1
+      postcss: 8.4.38
+      prettier: 3.2.5
+      tailwindcss: 3.4.3
+      typescript: 5.4.5
+packages: {}

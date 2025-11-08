@@ -65,7 +65,7 @@ pullQuotes?: string[]
 - Use `/api/preview?secret=CONTENT_PREVIEW_SECRET&slug=my-post` to render drafts during preview sessions.
 
 ## 🔍 Search & Pagefind
-- Pagefind indexes static HTML output. Run `pnpm build` followed by `pnpm pagefind:index` (handled automatically in the `build` script).
+- Pagefind indexes static HTML output after `pnpm build`; the CI-safe wrapper runs automatically via `pnpm postbuild`.
 - Generated assets live under `public/pagefind/` and are served statically or via `/api/search` when needed.
 
 ## 📡 RSS & SEO
@@ -82,13 +82,22 @@ Configure via environment variables:
 ## 🧪 Testing & CI
 - `pnpm typecheck`
 - `pnpm lint`
-- `pnpm build`
+- `pnpm ci:verify`
 
 GitHub Actions workflow (`.github/workflows/ci.yml`) runs the above and uploads the Pagefind index artifact on every push/PR.
 
 ## ☁️ Deployment
-- Optimized for [Vercel](https://vercel.com/) — simply connect the repo; `pnpm build` will generate the static assets and Pagefind index.
+- Optimized for [Vercel](https://vercel.com/) — simply connect the repo; `pnpm build` (with `pnpm postbuild`) will generate the static assets and Pagefind index.
 - Also compatible with Cloudflare Pages (`pnpm build` + serve `.next` output). Remember to copy `public/pagefind` artifacts after build.
+
+## 🏗️ Build on Netlify locally
+```bash
+nvm use
+pnpm install --frozen-lockfile
+pnpm ci:verify
+# Optional: netlify build
+```
+Ensure `SITE_URL` is set in your environment (see `.env.example`).
 
 ## 📊 Lighthouse
 Latest mobile Lighthouse (Chrome 123, emulated Pixel 5): **Performance 97 / Accessibility 100 / Best Practices 100 / SEO 100**.
