@@ -19,13 +19,26 @@ jobs:
           version: 8
 
       - name: Setup Node.js
+        if: ${{ hashFiles('pnpm-lock.yaml') != '' }}
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
 
+      - name: Setup Node.js (no cache)
+        if: ${{ hashFiles('pnpm-lock.yaml') == '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+          else
+            echo "pnpm-lock.yaml not found, falling back to generating a fresh lockfile"
+            pnpm install
+          fi
 
       - name: Type check
         run: pnpm typecheck
