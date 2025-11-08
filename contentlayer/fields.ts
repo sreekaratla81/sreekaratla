@@ -1,4 +1,4 @@
-import type { ComputedFields } from "@contentlayer2/source-files";
+import type { ComputedFields } from "contentlayer/source-files";
 import readingTime from "reading-time";
 
 const getSlug = (doc: any) => {
