@@ -1,0 +1,19 @@
+import { NextResponse } from "next/server";
+import { buildTrackFeed } from "@/lib/rss";
+import { trackLabels, type Track } from "@/lib/config";
+
+export const runtime = "edge";
+
+export async function GET(_: Request, { params }: { params: { track: Track } }) {
+  const track = params.track;
+  if (!trackLabels[track]) {
+    return new NextResponse("Track not found", { status: 404 });
+  }
+  const feed = buildTrackFeed(track);
+  return new NextResponse(feed, {
+    headers: {
+      "Content-Type": "application/rss+xml; charset=utf-8",
+      "Cache-Control": "s-maxage=3600, stale-while-revalidate"
+    }
+  });
+}

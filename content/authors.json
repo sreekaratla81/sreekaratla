@@ -1,0 +1,15 @@
+[
+  {
+    "id": "sreekar",
+    "name": "Sreekar Atla",
+    "title": "Technologist, Hospitality Operator, Conscious Leader",
+    "bio": "CTO turned hospitality operator exploring the edges of AI, guest experience, and conscious leadership.",
+    "avatar": "/social/avatar.jpg",
+    "location": "New York, NY",
+    "website": "https://sreekaratla.com",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/sreekaratla",
+      "x": "https://x.com/sreekaratla"
+    }
+  }
+]
