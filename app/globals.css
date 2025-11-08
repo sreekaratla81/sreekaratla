@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 210 33% 99%;
+  --foreground: 222 47% 11%;
+  --muted: 210 20% 95%;
+  --accent: 221 83% 53%;
+  --primary: 221 83% 53%;
+  --primary-foreground: 0 0% 100%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 221 83% 53%;
+}
+
+.dark {
+  --background: 222 47% 11%;
+  --foreground: 210 33% 98%;
+  --muted: 215 27% 17%;
+  --accent: 210 100% 75%;
+  --primary: 210 100% 75%;
+  --primary-foreground: 222 47% 11%;
+  --border: 215 27% 30%;
+  --input: 215 27% 30%;
+  --ring: 210 100% 75%;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.prose {
+  font-family: 'EB Garamond', 'Source Serif Pro', serif;
+}
