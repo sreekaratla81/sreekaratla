@@ -1,10 +1,9 @@
-name: CI
+name: build
 
 on:
-  push:
-    branches: [main]
   pull_request:
-    branches: [main]
+  push:
+    branches: [ main ]
 
 jobs:
   build:
@@ -13,44 +12,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
       - name: Setup Node.js
-        if: ${{ hashFiles('pnpm-lock.yaml') != '' }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: pnpm
+          node-version: '20.19.5'
+          cache: 'pnpm'
 
-      - name: Setup Node.js (no cache)
-        if: ${{ hashFiles('pnpm-lock.yaml') == '' }}
-        uses: actions/setup-node@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: 20
+          version: 8.15.4
+          run_install: false
 
-      - name: Install dependencies
-        run: |
-          if [ -f pnpm-lock.yaml ]; then
-            pnpm install --frozen-lockfile
-          else
-            echo "pnpm-lock.yaml not found, falling back to generating a fresh lockfile"
-            pnpm install
-          fi
+      - name: Install dependencies (frozen lockfile)
+        run: pnpm install --frozen-lockfile
 
       - name: Type check
-        run: pnpm typecheck
+        run: pnpm exec tsc --noEmit
 
       - name: Lint
-        run: pnpm lint
+        run: pnpm exec eslint . --max-warnings=0
 
       - name: Build
         run: pnpm build
 
-      - name: Upload Pagefind index
-        uses: actions/upload-artifact@v4
-        with:
-          name: pagefind-index
-          path: public/pagefind
+      - name: Upload Pagefind index (non-blocking)
+        if: always()
+        run: node scripts/pagefind-safe.js || true
