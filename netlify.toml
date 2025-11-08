@@ -1,9 +1,9 @@
 [build]
-command = "pnpm install --no-frozen-lockfile && pnpm build"
+# Use Corepack to activate the same pnpm we used to generate the lockfile
+command = "corepack enable && corepack prepare pnpm@8.15.4 --activate && pnpm install --frozen-lockfile && pnpm build"
 
 [build.environment]
 NODE_VERSION = "20.19.5"
-PNPM_VERSION = "9.12.0"
 
 [[plugins]]
 package = "@netlify/plugin-nextjs"
