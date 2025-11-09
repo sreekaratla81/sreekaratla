@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/container";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Now",
   description: "What Sreekar Atla is focused on this season."

@@ -1,23 +1,26 @@
-export const runtime = "nodejs";
+export const runtime = "edge";
 
 import { NextResponse } from "next/server";
-import { join } from "path";
-import { promises as fs } from "fs";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const file = searchParams.get("file") ?? "index.json";
-  const path = join(process.cwd(), "public", "pagefind", file);
+  const assetUrl = new URL(`/pagefind/${file}`, request.url);
 
-  try {
-    const data = await fs.readFile(path);
-    return new NextResponse(data, {
-      headers: {
-        "Content-Type": file.endsWith(".json") ? "application/json" : "application/octet-stream",
-        "Cache-Control": "public, max-age=3600"
-      }
-    });
-  } catch (error) {
-    return new NextResponse("Index not found", { status: 404 });
+  const response = await fetch(assetUrl);
+  if (!response.ok) {
+    return new NextResponse("Index not found", { status: response.status === 404 ? 404 : 500 });
   }
+
+  const body = await response.arrayBuffer();
+  const contentType =
+    response.headers.get("content-type") ?? (file.endsWith(".json") ? "application/json" : "application/octet-stream");
+  const cacheControl = response.headers.get("cache-control") ?? "public, max-age=3600";
+
+  return new NextResponse(body, {
+    headers: {
+      "Content-Type": contentType,
+      "Cache-Control": cacheControl
+    }
+  });
 }
