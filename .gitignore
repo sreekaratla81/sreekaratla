@@ -10,6 +10,9 @@ build
 public/pagefind
 public/robots.txt
 public/sitemap.xml
+public/sitemap-*.xml
+public/rss.xml
+public/rss/
 
 # TypeScript incremental build info
 tsconfig.tsbuildinfo

@@ -1,4 +1,4 @@
-import readingTime from "reading-time";
+import readingTime from "reading-time/lib/reading-time";
 import { compareDesc } from "date-fns";
 import { allPosts, Post } from "contentlayer/generated";
 
