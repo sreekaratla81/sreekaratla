@@ -1,9 +1,9 @@
-import { Feed } from "rss";
+import RSS from "rss";
 import { siteConfig, trackLabels } from "./config";
 import { getAllPosts, getPostsByType } from "./content";
 
 const buildFeed = (title: string, description: string, posts = getAllPosts()) => {
-  const feed = new Feed({
+  const feed = new RSS({
     title,
     description,
     id: siteConfig.url,
@@ -17,13 +17,13 @@ const buildFeed = (title: string, description: string, posts = getAllPosts()) =>
   });
 
   posts.forEach((post) => {
-    feed.addItem({
+    feed.item({
       title: post.title,
       id: `${siteConfig.url}${post.url}`,
       link: `${siteConfig.url}${post.url}`,
       description: post.excerpt,
       date: new Date(post.date),
-      category: post.tags.map((tag) => ({ name: tag })),
+      categories: post.tags.map((tag) => ({ name: tag })),
       author: [{ name: "Sreekar Atla" }]
     });
   });
@@ -35,11 +35,11 @@ export const buildGlobalFeed = () =>
   buildFeed(
     `${siteConfig.name} — Writing`,
     "All essays from Sreekar Atla across technology, hospitality, and conscious leadership."
-  ).rss2();
+  ).xml({ indent: true });
 
 export const buildTrackFeed = (track: keyof typeof trackLabels) =>
   buildFeed(
     `${siteConfig.name} — ${trackLabels[track]}`,
     `${trackLabels[track]} articles from Sreekar Atla.`,
     getPostsByType(track)
-  ).rss2();
+  ).xml({ indent: true });

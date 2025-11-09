@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "pnpm contentlayer:build && next dev",
     "build": "pnpm verify:content && pnpm contentlayer:build && next build && pnpm postbuild",
-    "contentlayer:build": "contentlayer build",
+    "contentlayer:build": "node scripts/contentlayer-build.mjs",
     "postbuild": "pnpm -s sitemap && pnpm -s search:index",
     "sitemap": "node -e \"if(process.env.SITE_URL){process.exit(0)} else {console.log('[sitemap] SITE_URL missing; skipping')}\" && next-sitemap",
     "search:index": "node scripts/pagefind-safe.js",
@@ -51,8 +51,7 @@
     "remark-gfm": "4.0.0",
     "rss": "1.2.2",
     "satori": "0.11.2",
-    "tailwind-merge": "2.2.2",
-    "gray-matter": "4.0.3"
+    "tailwind-merge": "2.2.2"
   },
   "devDependencies": {
     "@types/node": "20.12.7",
@@ -67,6 +66,10 @@
     "postcss": "8.4.38",
     "prettier": "3.2.5",
     "tailwindcss": "3.4.3",
-    "typescript": "5.4.5"
+    "typescript": "5.4.5",
+    "gray-matter": "4.0.3",
+    "@contentlayer/cli": "0.3.4",
+    "@contentlayer/utils": "0.3.4",
+    "clipanion": "3.2.1"
   }
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 import type { Post } from "contentlayer/generated";
 import { formatDate } from "@/lib/date";
 import { trackLabels } from "@/lib/config";
@@ -13,7 +14,7 @@ export function PostCard({ post }: { post: Post }) {
         <span>{formatDate(post.date)}</span>
         <ReadingTime post={post} />
       </div>
-      <Link href={post.url} className="block space-y-3">
+      <Link href={post.url as Route} className="block space-y-3">
         <h3 className="text-2xl font-semibold leading-tight text-foreground group-hover:text-accent">
           {post.title}
         </h3>

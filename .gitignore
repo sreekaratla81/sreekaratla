@@ -8,6 +8,11 @@ node_modules
 out
 build
 public/pagefind
+public/robots.txt
+public/sitemap.xml
+
+# TypeScript incremental build info
+tsconfig.tsbuildinfo
 
 # Logs
 npm-debug.log*

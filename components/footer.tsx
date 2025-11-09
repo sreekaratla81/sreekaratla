@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 import { Container } from "./container";
 import { siteConfig } from "@/lib/config";
 
@@ -12,15 +13,15 @@ export function Footer() {
         </div>
         <div className="flex flex-wrap gap-4 md:justify-end">
           {Object.entries(siteConfig.social).map(([key, value]) => (
-            <Link key={key} href={value} className="text-foreground/70 hocus:text-accent" target="_blank">
+            <a key={key} href={value} className="text-foreground/70 hocus:text-accent" target="_blank" rel="noreferrer">
               {key.charAt(0).toUpperCase() + key.slice(1)}
-            </Link>
+            </a>
           ))}
         </div>
       </Container>
       <Container className="mt-8 flex items-center justify-between text-xs text-foreground/60">
         <span>© {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</span>
-        <Link href="/rss.xml" className="hocus:text-accent">
+        <Link href={"/rss.xml" as Route} className="hocus:text-accent">
           RSS
         </Link>
       </Container>

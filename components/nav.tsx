@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { Route } from "next";
 import { usePathname } from "next/navigation";
 import { siteConfig } from "@/lib/config";
 import { cn } from "@/lib/utils";
@@ -15,7 +16,7 @@ export function Nav() {
         return (
           <Link
             key={item.href}
-            href={item.href}
+            href={item.href as Route}
             className={cn(
               "transition hocus:text-accent",
               active ? "text-accent" : "text-foreground/70"

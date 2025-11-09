@@ -4,9 +4,9 @@ import { trackLabels, type Track } from "@/lib/config";
 
 export const runtime = "nodejs";
 
-export async function GET(_: Request, { params }: { params: { track: Track } }) {
-  const track = params.track;
-  if (!trackLabels[track]) {
+export async function GET(_: Request, context: { params?: { track?: Track } } = {}) {
+  const track = context.params?.track;
+  if (!track || !trackLabels[track]) {
     return new NextResponse("Track not found", { status: 404 });
   }
   const feed = buildTrackFeed(track);

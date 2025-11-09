@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 import { draftMode } from "next/headers";
 import { Container } from "@/components/container";
 import { NewsletterCta } from "@/components/newsletter-cta";
@@ -10,6 +11,10 @@ export default function HomePage() {
   const { isEnabled } = draftMode();
   const posts = getAllPosts({ includeDrafts: isEnabled });
   const [featured, ...rest] = posts;
+  const fallbackPosts = rest.length > 0 ? rest : featured ? [featured] : [];
+  const recentPosts: Array<(typeof posts)[number]> = fallbackPosts
+    .filter((post: (typeof posts)[number] | undefined): post is (typeof posts)[number] => Boolean(post))
+    .slice(0, 4);
 
   return (
     <>
@@ -34,11 +39,11 @@ export default function HomePage() {
           {featured ? (
             <div className="space-y-4 rounded-3xl border border-border/60 bg-background/60 p-6 shadow-lg">
               <p className="text-xs uppercase tracking-wide text-foreground/60">Featured essay</p>
-              <Link href={featured.url} className="space-y-3">
+              <Link href={featured.url as Route} className="space-y-3">
                 <h2 className="text-2xl font-semibold leading-tight">{featured.title}</h2>
                 <p className="text-foreground/70">{featured.excerpt}</p>
               </Link>
-              <Link href="/writing" className="text-sm font-semibold text-accent">
+              <Link href={"/writing" as Route} className="text-sm font-semibold text-accent">
                 Browse all writing →
               </Link>
             </div>
@@ -55,7 +60,7 @@ export default function HomePage() {
           <p className="text-foreground/60">Fresh thinking across the three tracks.</p>
         </div>
         <div className="grid gap-6 md:grid-cols-2">
-          {(rest.length > 0 ? rest : featured ? [featured] : []).slice(0, 4).map((post) => (
+          {recentPosts.map((post) => (
             <PostCard key={post._id} post={post} />
           ))}
         </div>
