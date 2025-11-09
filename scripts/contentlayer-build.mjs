@@ -1,8 +1,32 @@
 import { spawnSync } from "node:child_process";
 
 function run(cmd, args, env = {}) {
-  const r = spawnSync(cmd, args, { stdio: "inherit", shell: process.platform === "win32", env: { ...process.env, ...env } });
-  return r.status ?? (r.error ? 1 : 0);
+  const isWindows = process.platform === "win32";
+  const r = spawnSync(cmd, args, {
+    stdio: isWindows ? "pipe" : "inherit",
+    shell: isWindows,
+    env: { ...process.env, ...env },
+    encoding: isWindows ? "utf8" : undefined,
+  });
+
+  let code = r.status ?? (r.error ? 1 : 0);
+
+  if (!isWindows) return code;
+
+  const stdout = typeof r.stdout === "string" ? r.stdout : r.stdout?.toString() ?? "";
+  const stderr = typeof r.stderr === "string" ? r.stderr : r.stderr?.toString() ?? "";
+  const combined = `${stdout}${stderr}`;
+  const clipanionBugMessage = "The \"code\" argument must be of type number. Received an instance of Object";
+  const isClipanionBug =
+    code !== 0 && combined.includes("ERR_INVALID_ARG_TYPE") && combined.includes(clipanionBugMessage);
+
+  if (stdout) process.stdout.write(stdout);
+  if (stderr) process.stderr.write(stderr);
+
+  // Windows workaround for Contentlayer 0.3.4 / Clipanion 3.2.1 emitting ERR_INVALID_ARG_TYPE.
+  if (isClipanionBug) code = 0;
+
+  return code;
 }
 
 function contentlayerBuild() {
