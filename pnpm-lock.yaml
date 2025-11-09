@@ -2,6 +2,7 @@ lockfileVersion: '9.0'
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
+pnpmfileChecksum: drfn3qda3fhgrv5yllselya3v4
 importers:
   .:
     specifiers:
