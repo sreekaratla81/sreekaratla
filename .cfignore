@@ -1,0 +1,9 @@
+# Exclude Next.js caches and large artifacts
+.next/cache/**
+**/*.pack
+**/*.map
+# Safety: never ship dependencies
+node_modules/**
+# Local/editor noise
+.vscode/**
+*.log

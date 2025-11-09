@@ -91,6 +91,8 @@ GitHub Actions workflow (`.github/workflows/ci.yml`) runs the above and uploads 
 - Also compatible with Cloudflare Pages (`pnpm build` + serve `.next` output). Remember to copy `public/pagefind` artifacts after build.
   - In Cloudflare Pages settings, leave the **Deploy command** empty or set it to `pnpm run deploy` so the guard script runs instead of Wrangler. Successful runs log `[deploy] Cloudflare Pages guard invoked. CF_PAGES=true` followed by `[deploy] Pages handles static publishing; skipping Wrangler deploy step.`
   - Avoid `npx wrangler deploy .next`; rely on Pages’ native static deployment unless you add a proper Worker entry file and `wrangler.toml` configuration.
+  - Cloudflare Pages uploads `.next` directly; `.cfignore` strips caches and `pnpm clean:pages` removes oversized artifacts so every file stays below the 25 MiB limit.
+  - Wrangler deploys are not required for Pages. Only introduce Wrangler/Workers if you add custom server logic later.
 
 ## 🏗️ Build on Netlify locally
 ```bash
