@@ -35,7 +35,8 @@
         "content/*"
       ],
       "contentlayer/generated": [
-        ".contentlayer/generated"
+        ".contentlayer/generated",
+        "types/contentlayer"
       ],
       "mdx/types": [
         "types/mdx"

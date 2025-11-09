@@ -4,15 +4,12 @@ import rehypeSlug from 'rehype-slug'
 import remarkGfm from 'remark-gfm'
 import readingTime from 'reading-time'
 
-type Track = 'tech' | 'hospitality' | 'conscious-leadership'
-
-type RawDoc = {
+type SlugSource = {
   _raw: { sourceFileName?: string; flattenedPath: string }
   slug?: string
-  body: { raw: string }
 }
 
-const resolveSlug = (doc: RawDoc) => {
+const resolveSlug = <T extends SlugSource>(doc: T) => {
   if (doc.slug) return doc.slug
   const fileName = doc._raw.sourceFileName ?? doc._raw.flattenedPath
   return fileName.replace(/\.mdx$/, '')
@@ -44,23 +41,23 @@ export const Post = defineDocumentType(() => ({
   computedFields: {
     slug: {
       type: 'string',
-      resolve: (doc: RawDoc) => resolveSlug(doc)
+      resolve: (doc) => resolveSlug(doc)
     },
     url: {
       type: 'string',
-      resolve: (doc: RawDoc & { type: Track }) => `/writing/${resolveSlug(doc)}`
+      resolve: (doc) => `/writing/${resolveSlug(doc)}`
     },
     readingTime: {
       type: 'json',
-      resolve: (doc: RawDoc) => readingTime(doc.body.raw)
+      resolve: (doc) => readingTime(doc.body.raw)
     },
     ogTitle: {
       type: 'string',
-      resolve: (doc: RawDoc & { title: string; type: Track }) => `${doc.title} • ${doc.type.replace(/-/g, ' ')}`
+      resolve: (doc) => `${doc.title} • ${doc.type.replace(/-/g, ' ')}`
     },
     ogDescription: {
       type: 'string',
-      resolve: (doc: RawDoc & { summary?: string; excerpt: string }) => doc.summary ?? doc.excerpt
+      resolve: (doc) => doc.summary ?? doc.excerpt
     }
   }
 }))
