@@ -1,3 +1,5 @@
+export const runtime = "edge";
+
 import Link from "next/link";
 import { draftMode } from "next/headers";
 import { Container } from "@/components/container";
