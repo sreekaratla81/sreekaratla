@@ -49,8 +49,7 @@
     ]
   },
   "exclude": [
-    "node_modules",
-    ".contentlayer"
+    "node_modules"
   ],
   "include": [
     "next-env.d.ts",
