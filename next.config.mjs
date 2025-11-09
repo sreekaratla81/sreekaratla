@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { withContentlayer } from "next-contentlayer";
 
 const securityHeaders = [
   {
@@ -62,4 +63,4 @@ if (!hasContentlayerConfig) {
   console.warn("[build] Contentlayer config not found; continuing without it.");
 }
 
-export default nextConfig;
+export default withContentlayer(nextConfig);
