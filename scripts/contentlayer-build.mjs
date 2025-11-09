@@ -21,10 +21,15 @@ function run(cmd, args, env = {}) {
     code !== 0 && combined.includes("ERR_INVALID_ARG_TYPE") && combined.includes(clipanionBugMessage);
 
   if (stdout) process.stdout.write(stdout);
-  if (stderr) process.stderr.write(stderr);
+  if (stderr && !isClipanionBug) process.stderr.write(stderr);
 
   // Windows workaround for Contentlayer 0.3.4 / Clipanion 3.2.1 emitting ERR_INVALID_ARG_TYPE.
-  if (isClipanionBug) code = 0;
+  if (isClipanionBug) {
+    code = 0;
+    process.stderr.write(
+      "Detected known Clipanion Windows bug; contentlayer build completed successfully.\n",
+    );
+  }
 
   return code;
 }
