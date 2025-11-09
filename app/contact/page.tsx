@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Container } from "@/components/container";
 import { Button } from "@/components/ui/button";
 
-export const dynamic = "force-static";
-
 export const metadata: Metadata = {
   title: "Contact",
   description: "Reach out to Sreekar Atla for collaborations, advisory, or speaking."
