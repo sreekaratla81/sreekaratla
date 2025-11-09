@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/utils";
 
 type Variant = "primary" | "ghost" | "outline";
@@ -9,7 +8,8 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: Variant;
 };
 
-const baseStyles = "inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition";
+const baseStyles =
+  "inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition";
 
 const variants: Record<Variant, string> = {
   primary:
@@ -19,10 +19,32 @@ const variants: Record<Variant, string> = {
     "border border-border bg-transparent px-4 py-2 hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 };
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button";
-    return <Comp ref={ref} className={cn(baseStyles, variants[variant], className)} {...props} />;
+type ButtonElement = HTMLButtonElement | HTMLAnchorElement | HTMLSpanElement;
+
+type ForwardedRef = React.ForwardedRef<ButtonElement>;
+
+type ChildWithClassName = { className?: string };
+
+export const Button = React.forwardRef<ButtonElement, ButtonProps>(
+  ({ className, variant = "primary", asChild = false, children, type, ...props }, ref) => {
+    const mergedClassName = cn(baseStyles, variants[variant], className);
+
+    if (asChild && React.isValidElement(children)) {
+      const child = React.Children.only(children) as React.ReactElement<ChildWithClassName>;
+      return React.cloneElement(child, {
+        ...props,
+        className: cn(mergedClassName, child.props.className),
+        ref
+      });
+    }
+
+    const buttonType = type ?? "button";
+
+    return (
+      <button ref={ref as ForwardedRef} className={mergedClassName} type={buttonType} {...props}>
+        {children}
+      </button>
+    );
   }
 );
 Button.displayName = "Button";
