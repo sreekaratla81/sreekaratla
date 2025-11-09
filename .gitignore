@@ -37,3 +37,6 @@ pnpm-debug.log*
 
 # Pagefind
 pagefind_indices
+public/rss.xml
+public/rss
+public/sitemap-*.xml

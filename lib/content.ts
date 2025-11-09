@@ -1,4 +1,3 @@
-import readingTime from "reading-time";
 import { compareDesc } from "date-fns";
 import { allPosts, Post } from "contentlayer/generated";
 
@@ -21,8 +20,6 @@ export const resolvePostType = (post: Post): PostType => {
   if (isPostType(fromDir)) return fromDir;
   return TRACKS[0];
 };
-
-export const getReadingTime = (raw: string) => readingTime(raw);
 
 const filterDrafts = (post: Post, includeDrafts: boolean) => {
   if (includeDrafts) return true;
