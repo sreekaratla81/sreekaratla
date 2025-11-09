@@ -35,7 +35,7 @@ function normalizeYaml(obj) {
 }
 
 async function main() {
-  const files = await collectMdxFiles(contentDir);
+  const files = (await collectMdxFiles(contentDir)).sort((a, b) => a.localeCompare(b));
   let errors = 0;
 
   for (const file of files) {
@@ -47,11 +47,11 @@ async function main() {
       const required = ["title", "date", "summary", "slug"];
       const missing = required.filter(k => !data[k]);
       if (missing.length) {
-        console.error(`[verify:content] ${file}: missing front-matter keys: ${missing.join(", ")}`);
+        console.error(`[verify:content] ${path.relative(repoRoot, file)}: missing front-matter keys: ${missing.join(", ")}`);
         errors++;
       }
     } catch (e) {
-      console.error(`[verify:content] ${file}: invalid front-matter: ${e.message}`);
+      console.error(`[verify:content] ${path.relative(repoRoot, file)}: invalid front-matter: ${e.message}`);
       errors++;
     }
   }

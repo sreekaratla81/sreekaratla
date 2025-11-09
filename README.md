@@ -89,6 +89,7 @@ GitHub Actions workflow (`.github/workflows/ci.yml`) runs the above and uploads 
 ## ☁️ Deployment
 - Optimized for [Vercel](https://vercel.com/) — simply connect the repo; `pnpm build` (with `pnpm postbuild`) will generate the static assets and Pagefind index.
 - Also compatible with Cloudflare Pages (`pnpm build` + serve `.next` output). Remember to copy `public/pagefind` artifacts after build.
+  - In Cloudflare Pages settings, leave the **Deploy command** empty or set it to `pnpm run deploy` (a no-op guard). Pages will automatically ship the static assets; no custom Wrangler deploy is required.
 
 ## 🏗️ Build on Netlify locally
 ```bash
