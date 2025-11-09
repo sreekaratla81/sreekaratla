@@ -7,8 +7,9 @@
     "node": "20.19.x"
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build && pnpm postbuild",
+    "dev": "pnpm contentlayer:build && next dev",
+    "build": "pnpm contentlayer:build && next build && pnpm postbuild",
+    "contentlayer:build": "contentlayer build",
     "postbuild": "pnpm -s sitemap && pnpm -s search:index",
     "sitemap": "node -e \"if(process.env.SITE_URL){process.exit(0)} else {console.log('[sitemap] SITE_URL missing; skipping')}\" && next-sitemap",
     "search:index": "node scripts/pagefind-safe.js",

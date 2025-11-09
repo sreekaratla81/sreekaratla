@@ -66,7 +66,13 @@ export const Post = defineDocumentType(() => ({
 
 export default makeSource({
   contentDirPath: 'content',
+  contentDirExclude: ['authors.json', 'images'],
   documentTypes: [Post],
+  fieldOptions: {
+    typeFieldName: 'docType'
+  },
+  disableImportAliasWarning: true,
+  onUnknownDocuments: 'skip-ignore',
   mdx: {
     remarkPlugins: [remarkGfm],
     rehypePlugins: [rehypeSlug, [rehypeAutolinkHeadings, { behavior: 'wrap' }]]

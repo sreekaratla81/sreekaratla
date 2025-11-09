@@ -1,6 +1,5 @@
-import { createRequire } from "module";
-
-const req = createRequire(import.meta.url);
+import fs from "node:fs";
+import path from "node:path";
 
 const securityHeaders = [
   {
@@ -33,7 +32,7 @@ const securityHeaders = [
   }
 ];
 
-const baseConfig = {
+const nextConfig = {
   reactStrictMode: true,
   experimental: {
     typedRoutes: true
@@ -48,14 +47,19 @@ const baseConfig = {
   }
 };
 
-export default (async () => {
-  try {
-    req.resolve("contentlayer");
-    const { withContentlayer } = await import("next-contentlayer");
-    await import("./contentlayer.config.ts");
-    return withContentlayer(baseConfig);
-  } catch {
-    console.warn("[build] Contentlayer config not found; continuing without it.");
-    return baseConfig;
-  }
-})();
+const contentlayerConfigPaths = [
+  "contentlayer.config.ts",
+  "contentlayer.config.js",
+  "contentlayer.config.mjs",
+  "contentlayer.config.cjs"
+];
+
+const hasContentlayerConfig = contentlayerConfigPaths.some((configPath) =>
+  fs.existsSync(path.join(process.cwd(), configPath))
+);
+
+if (!hasContentlayerConfig) {
+  console.warn("[build] Contentlayer config not found; continuing without it.");
+}
+
+export default nextConfig;
