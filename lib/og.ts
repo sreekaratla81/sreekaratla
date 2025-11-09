@@ -1,3 +1,4 @@
+import React from "react";
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
@@ -5,9 +6,10 @@ export const runtime = "edge";
 export function ogImage(params?: { title?: string }) {
   const title = params?.title ?? "Sreekar Atla";
   return new ImageResponse(
-    (
-      <div
-        style={{
+    React.createElement(
+      "div",
+      {
+        style: {
           display: "flex",
           height: "100%",
           width: "100%",
@@ -15,10 +17,9 @@ export function ogImage(params?: { title?: string }) {
           justifyContent: "center",
           fontSize: 64,
           fontWeight: 700
-        }}
-      >
-        {title}
-      </div>
+        }
+      },
+      title
     ),
     { width: 1200, height: 630 }
   );
