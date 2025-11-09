@@ -11,7 +11,7 @@ import { TagBadge } from "@/components/tag-badge";
 import { ShareButtons } from "@/components/share-buttons";
 import { ReadingTime } from "@/components/reading-time";
 import { PostCard } from "@/components/post-card";
-import { getAdjacentPosts, getPostBySlug, getRelatedPosts } from "@/lib/content";
+import { getAdjacentPosts, getPostBySlug, getRelatedPosts, resolvePostType } from "@/lib/content";
 import { formatDate } from "@/lib/date";
 import { trackLabels, siteConfig } from "@/lib/config";
 import { mdxComponents } from "@/lib/mdx";
@@ -29,9 +29,11 @@ export const generateMetadata = ({ params }: ArticlePageProps): Metadata => {
   const post = getPostBySlug(params.slug, { includeDrafts: isEnabled });
   if (!post) return {};
 
+  const description = post.excerpt ?? post.summary;
+
   return {
     title: post.title,
-    description: post.excerpt,
+    description,
     alternates: {
       canonical: post.canonicalUrl ?? `${siteConfig.url}${post.url}`
     },
@@ -82,6 +84,7 @@ export default function ArticlePage({ params }: ArticlePageProps) {
     notFound();
   }
 
+  const track = resolvePostType(post);
   const Component = useMDXComponent(post.body.code);
   const headings = extractHeadings(post.body.raw ?? "");
   const adjacent = getAdjacentPosts(post, { includeDrafts: isEnabled });
@@ -91,11 +94,11 @@ export default function ArticlePage({ params }: ArticlePageProps) {
     <Container className="grid gap-12 py-16 lg:grid-cols-[minmax(0,3fr),minmax(0,1fr)]">
       <article className="space-y-8">
         <div className="space-y-4">
-          <Link href={`/writing?track=${post.type}`} className="inline-flex items-center text-sm text-accent">
-            {trackLabels[post.type]}
+          <Link href={`/writing?track=${track}`} className="inline-flex items-center text-sm text-accent">
+            {trackLabels[track]}
           </Link>
           <h1 className="text-4xl font-semibold leading-tight md:text-5xl">{post.title}</h1>
-          <p className="text-foreground/70">{post.excerpt}</p>
+          <p className="text-foreground/70">{post.excerpt ?? post.summary}</p>
           <div className="flex flex-wrap gap-3 text-sm text-foreground/60">
             <span>{formatDate(post.date)}</span>
             <ReadingTime post={post} />

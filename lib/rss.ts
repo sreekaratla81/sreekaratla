@@ -21,7 +21,7 @@ const buildFeed = (title: string, description: string, posts = getAllPosts()) =>
       title: post.title,
       id: `${siteConfig.url}${post.url}`,
       link: `${siteConfig.url}${post.url}`,
-      description: post.excerpt,
+      description: post.excerpt ?? post.summary,
       date: new Date(post.date),
       categories: post.tags.map((tag) => ({ name: tag })),
       author: [{ name: "Sreekar Atla" }]

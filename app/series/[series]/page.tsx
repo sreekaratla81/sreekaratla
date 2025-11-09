@@ -13,9 +13,9 @@ type ContentPost = ReturnType<typeof getAllPosts>[number];
 
 export const generateStaticParams = () => {
   const series = new Set<string>();
-  getAllPosts()
-    .filter((post: ContentPost): post is ContentPost => Boolean(post.series))
-    .forEach((post: ContentPost) => series.add(post.series!));
+  getAllPosts().forEach((post: ContentPost) => {
+    post.series?.forEach((value) => series.add(value));
+  });
   return Array.from(series).map((value) => ({ series: value }));
 };
 

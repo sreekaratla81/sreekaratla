@@ -22,21 +22,21 @@ export const Post = defineDocumentType(() => ({
   fields: {
     type: {
       type: 'enum',
-      options: ['tech', 'hospitality', 'conscious-leadership'],
-      required: true
+      options: ['tech', 'hospitality', 'conscious-leadership']
     },
     title: { type: 'string', required: true },
-    excerpt: { type: 'string', required: true },
+    excerpt: { type: 'string' },
     summary: { type: 'string', required: true },
     date: { type: 'date', required: true },
     updated: { type: 'date' },
     slug: { type: 'string' },
     tags: { type: 'list', of: { type: 'string' }, required: true },
-    series: { type: 'string' },
+    series: { type: 'list', of: { type: 'string' } },
     cover: { type: 'string' },
     draft: { type: 'boolean' },
     canonicalUrl: { type: 'string' },
-    pullQuotes: { type: 'list', of: { type: 'string' } }
+    pullQuotes: { type: 'list', of: { type: 'string' } },
+    keyPoints: { type: 'list', of: { type: 'string' } }
   },
   computedFields: {
     slug: {
@@ -53,7 +53,12 @@ export const Post = defineDocumentType(() => ({
     },
     ogTitle: {
       type: 'string',
-      resolve: (doc) => `${doc.title} • ${doc.type.replace(/-/g, ' ')}`
+      resolve: (doc) => {
+        const flattened = doc._raw.flattenedPath ?? ''
+        const inferred = flattened.split('/')[0] || 'post'
+        const type = doc.type ?? inferred
+        return `${doc.title} • ${type.replace(/-/g, ' ')}`
+      }
     },
     ogDescription: {
       type: 'string',
