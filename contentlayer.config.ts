@@ -30,6 +30,7 @@ export const Post = defineDocumentType(() => ({
     },
     title: { type: 'string', required: true },
     excerpt: { type: 'string', required: true },
+    summary: { type: 'string', required: true },
     date: { type: 'date', required: true },
     updated: { type: 'date' },
     slug: { type: 'string' },
@@ -59,7 +60,7 @@ export const Post = defineDocumentType(() => ({
     },
     ogDescription: {
       type: 'string',
-      resolve: (doc: RawDoc & { excerpt: string }) => doc.excerpt
+      resolve: (doc: RawDoc & { summary?: string; excerpt: string }) => doc.summary ?? doc.excerpt
     }
   }
 }))
