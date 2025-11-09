@@ -7,6 +7,9 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@/components/analytics";
 import Script from "next/script";
 
+export const runtime = "edge";
+export const preferredRegion = "auto";
+
 export const metadata: Metadata = buildMetadata();
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

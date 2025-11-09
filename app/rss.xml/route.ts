@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { buildGlobalFeed } from "@/lib/rss";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 
 export async function GET() {
   const feed = buildGlobalFeed();

@@ -15,7 +15,7 @@
     "clean:pages": "node scripts/clean-pages.mjs",
     "sitemap": "node -e \"if(process.env.SITE_URL){process.exit(0)} else {console.log('[sitemap] SITE_URL missing; skipping')}\" && next-sitemap",
     "search:index": "node scripts/pagefind-safe.js",
-    "ci:verify": "node -v && pnpm -v && next -v && pnpm build",
+    "ci:verify": "pnpm -s typecheck && pnpm -s lint && npx @cloudflare/next-on-pages@1",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "lint": "next lint",

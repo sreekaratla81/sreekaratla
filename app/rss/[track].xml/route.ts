@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { buildTrackFeed } from "@/lib/rss";
 import { trackLabels, type Track } from "@/lib/config";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 
 export async function GET(_: Request, context: { params?: { track?: Track } } = {}) {
   const track = context.params?.track;
