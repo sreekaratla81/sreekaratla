@@ -1,3 +1,5 @@
+export const runtime = "edge";
+
 import { draftMode } from "next/headers";
 import { NextResponse } from "next/server";
 
