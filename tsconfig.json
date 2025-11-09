@@ -48,17 +48,15 @@
       }
     ]
   },
+  "exclude": [
+    "node_modules",
+    ".contentlayer"
+  ],
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "**/*.d.ts",
-    "**/*.cjs",
-    "**/*.mjs",
     ".contentlayer/generated",
     ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
   ]
 }

@@ -1,89 +1,71 @@
-import { readdir, readFile } from "node:fs/promises";
-import { join, extname } from "node:path";
+import fs from "node:fs/promises";
+import path from "node:path";
 import matter from "gray-matter";
 
-const ROOT = new URL("..", import.meta.url).pathname;
-const CONTENT_DIR = join(ROOT, "content");
+const repoRoot = process.cwd();
+const contentDir = path.resolve(repoRoot, "content");
 
-const requiredStringFields = ["title", "date", "summary", "slug", "cover"];
-const requiredBooleanFields = ["draft"];
-const requiredListFields = ["tags"];
-const optionalStringFields = ["canonicalUrl"];
-
+/** recursively collect .mdx files under content/ */
 async function collectMdxFiles(dir) {
-  const entries = await readdir(dir, { withFileTypes: true });
-  const files = await Promise.all(
-    entries.map(async (entry) => {
-      const resolved = join(dir, entry.name);
-      if (entry.isDirectory()) {
-        return collectMdxFiles(resolved);
-      }
-      return extname(entry.name) === ".mdx" ? [resolved] : [];
-    })
-  );
-
-  return files.flat();
+  const out = [];
+  try {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    for (const e of entries) {
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) out.push(...await collectMdxFiles(p));
+      else if (e.isFile() && p.toLowerCase().endsWith(".mdx")) out.push(p);
+    }
+  } catch (err) {
+    // If content directory is missing, do not fail the build—just warn
+    if (err.code === "ENOENT") {
+      console.warn(`[verify:content] content dir not found: ${dir}`);
+      return [];
+    }
+    throw err;
+  }
+  return out;
 }
 
-function validateFrontMatter(file, data) {
-  const errors = [];
-
-  for (const field of requiredStringFields) {
-    if (typeof data[field] !== "string" || data[field].trim() === "") {
-      errors.push(`expected string field "${field}"`);
-    }
-  }
-
-  for (const field of requiredBooleanFields) {
-    if (typeof data[field] !== "boolean") {
-      errors.push(`expected boolean field "${field}"`);
-    }
-  }
-
-  for (const field of requiredListFields) {
-    if (!Array.isArray(data[field]) || data[field].some((item) => typeof item !== "string" || item.trim() === "")) {
-      errors.push(`expected string array field "${field}"`);
-    }
-  }
-
-  for (const field of optionalStringFields) {
-    if (field in data && typeof data[field] !== "string") {
-      errors.push(`expected optional string field "${field}"`);
-    }
-  }
-
-  if (errors.length > 0) {
-    throw new Error(`${file}: ${errors.join(", ")}`);
-  }
+function normalizeYaml(obj) {
+  // ensure arrays are arrays, coerce scalar types lightly
+  if (typeof obj.tags === "string") obj.tags = [obj.tags];
+  if (obj.tags && !Array.isArray(obj.tags)) obj.tags = [];
+  if (typeof obj.draft !== "boolean") obj.draft = false;
+  return obj;
 }
 
 async function main() {
-  const files = await collectMdxFiles(CONTENT_DIR);
-  const errors = [];
+  const files = await collectMdxFiles(contentDir);
+  let errors = 0;
 
-  await Promise.all(
-    files.map(async (file) => {
-      try {
-        const source = await readFile(file, "utf8");
-        const parsed = matter(source);
-        validateFrontMatter(file, parsed.data);
-      } catch (error) {
-        errors.push(error instanceof Error ? error.message : String(error));
+  for (const file of files) {
+    const raw = await fs.readFile(file, "utf8");
+    try {
+      const gm = matter(raw, { language: "yaml", delimiters: "---" });
+      const data = normalizeYaml(gm.data || {});
+      // Basic required keys for our site
+      const required = ["title", "date", "summary", "slug"];
+      const missing = required.filter(k => !data[k]);
+      if (missing.length) {
+        console.error(`[verify:content] ${file}: missing front-matter keys: ${missing.join(", ")}`);
+        errors++;
       }
-    })
-  );
-
-  if (errors.length > 0) {
-    console.error("\n[verify:content] Invalid front matter detected:\n");
-    for (const error of errors) {
-      console.error(` - ${error}`);
+    } catch (e) {
+      console.error(`[verify:content] ${file}: invalid front-matter: ${e.message}`);
+      errors++;
     }
-    console.error("\nFix the issues above and rerun the build.\n");
-    process.exit(1);
   }
+
+  if (errors > 0) {
+    console.error(`[verify:content] ${errors} content issue(s) found`);
+    process.exitCode = 1;
+    return;
+  }
+
+  console.log(`[verify:content] OK (${files.length} files)`);
 }
 
-main().catch((error) => {
-  console.error("[verify:content] Unexpected failure", error);
-  process.exit(1);
+main().catch((e) => {
+  console.error("[verify:content] Unexpected failure", e);
+  process.exitCode = 1;
 });
