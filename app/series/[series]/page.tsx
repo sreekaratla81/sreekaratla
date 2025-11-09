@@ -9,11 +9,13 @@ interface SeriesPageProps {
   params: { series: string };
 }
 
+type ContentPost = ReturnType<typeof getAllPosts>[number];
+
 export const generateStaticParams = () => {
   const series = new Set<string>();
   getAllPosts()
-    .filter((post) => post.series)
-    .forEach((post) => series.add(post.series!));
+    .filter((post: ContentPost): post is ContentPost => Boolean(post.series))
+    .forEach((post: ContentPost) => series.add(post.series!));
   return Array.from(series).map((value) => ({ series: value }));
 };
 
@@ -41,7 +43,7 @@ export default function SeriesPage({ params }: SeriesPageProps) {
         <p className="text-foreground/60">Curated essays connected by a common thread.</p>
       </div>
       <div className="grid gap-6 md:grid-cols-2">
-        {posts.map((post) => (
+        {posts.map((post: ContentPost) => (
           <PostCard key={post._id} post={post} />
         ))}
       </div>

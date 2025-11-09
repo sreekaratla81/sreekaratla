@@ -19,29 +19,26 @@ const variants: Record<Variant, string> = {
     "border border-border bg-transparent px-4 py-2 hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 };
 
-type ButtonElement = HTMLButtonElement | HTMLAnchorElement | HTMLSpanElement;
-
-type ForwardedRef = React.ForwardedRef<ButtonElement>;
-
 type ChildWithClassName = { className?: string };
 
-export const Button = React.forwardRef<ButtonElement, ButtonProps>(
+type ChildWithOptionalRef = ChildWithClassName & { ref?: React.Ref<HTMLButtonElement> };
+
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", asChild = false, children, type, ...props }, ref) => {
     const mergedClassName = cn(baseStyles, variants[variant], className);
 
     if (asChild && React.isValidElement(children)) {
-      const child = React.Children.only(children) as React.ReactElement<ChildWithClassName>;
+      const child = React.Children.only(children) as React.ReactElement<ChildWithOptionalRef>;
       return React.cloneElement(child, {
         ...props,
-        className: cn(mergedClassName, child.props.className),
-        ref
+        className: cn(mergedClassName, child.props.className)
       });
     }
 
     const buttonType = type ?? "button";
 
     return (
-      <button ref={ref as ForwardedRef} className={mergedClassName} type={buttonType} {...props}>
+      <button ref={ref} className={mergedClassName} type={buttonType} {...props}>
         {children}
       </button>
     );

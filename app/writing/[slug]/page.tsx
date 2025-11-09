@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { Route } from "next";
 import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
 import { allPosts } from "contentlayer/generated";
@@ -9,6 +10,7 @@ import { Prose } from "@/components/prose";
 import { TagBadge } from "@/components/tag-badge";
 import { ShareButtons } from "@/components/share-buttons";
 import { ReadingTime } from "@/components/reading-time";
+import { PostCard } from "@/components/post-card";
 import { getAdjacentPosts, getPostBySlug, getRelatedPosts } from "@/lib/content";
 import { formatDate } from "@/lib/date";
 import { trackLabels, siteConfig } from "@/lib/config";
@@ -122,7 +124,7 @@ export default function ArticlePage({ params }: ArticlePageProps) {
           {adjacent.previous && (
             <div>
               <p className="text-xs uppercase tracking-wide text-foreground/50">Previous</p>
-              <Link href={adjacent.previous.url} className="text-lg font-semibold hocus:text-accent">
+              <Link href={adjacent.previous.url as Route} className="text-lg font-semibold hocus:text-accent">
                 {adjacent.previous.title}
               </Link>
             </div>
@@ -130,7 +132,7 @@ export default function ArticlePage({ params }: ArticlePageProps) {
           {adjacent.next && (
             <div>
               <p className="text-xs uppercase tracking-wide text-foreground/50">Next</p>
-              <Link href={adjacent.next.url} className="text-lg font-semibold hocus:text-accent">
+              <Link href={adjacent.next.url as Route} className="text-lg font-semibold hocus:text-accent">
                 {adjacent.next.title}
               </Link>
             </div>

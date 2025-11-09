@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 import { Button } from "@/components/ui/button";
 
 interface PaginationProps {
@@ -19,7 +20,7 @@ const buildHref = (basePath: string, page: number, query?: Record<string, string
   }
   params.set("page", String(page));
   const qs = params.toString();
-  return qs ? `${basePath}?${qs}` : basePath;
+  return (qs ? `${basePath}?${qs}` : basePath) as Route;
 };
 
 export function Pagination({ currentPage, totalPages, basePath, query }: PaginationProps) {
