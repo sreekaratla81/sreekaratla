@@ -18,7 +18,7 @@ function run(cmd, args, env = {}) {
   const combined = `${stdout}${stderr}`;
   const clipanionBugMessage = "The \"code\" argument must be of type number. Received an instance of Object";
   const isClipanionBug =
-    code !== 0 && combined.includes("ERR_INVALID_ARG_TYPE") && combined.includes(clipanionBugMessage);
+    combined.includes("ERR_INVALID_ARG_TYPE") && combined.includes(clipanionBugMessage);
 
   if (stdout) process.stdout.write(stdout);
   if (stderr && !isClipanionBug) process.stderr.write(stderr);
