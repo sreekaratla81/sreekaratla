@@ -1,17 +1,4 @@
-const hasPagesFlag = process.env.CF_PAGES === "1";
-const hasPagesUrl =
-  process.env.CI === "true" && typeof process.env.CF_PAGES_URL === "string" && process.env.CF_PAGES_URL.length > 0;
-const isCfPages = hasPagesFlag || hasPagesUrl;
-
-if (isCfPages) {
-  console.log("[cf-deploy-guard] Cloudflare Pages build detected; deploy handled by Pages. Skipping custom deploy step.");
-  process.exit(0);
-}
-
-if (process.env.CI === "true") {
-  console.log("[cf-deploy-guard] CI environment without Cloudflare Pages context; nothing to deploy.");
-} else {
-  console.log("[cf-deploy-guard] Local environment; deploy script is a no-op.");
-}
-
+const isPages = !!(process.env.CF_PAGES || process.env.CF_PAGES_URL);
+console.log(`[deploy] Cloudflare Pages guard. CF_PAGES=${String(isPages)}`);
+console.log("[deploy] No Worker versions upload for Pages sites. Skipping.");
 process.exit(0);
