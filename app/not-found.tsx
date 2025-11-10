@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import Link from "next/link";
 import { Container } from "@/components/container";
 
@@ -8,7 +9,7 @@ export default function NotFound() {
     { href: "/hospitality", label: "Hospitality" },
     { href: "/leadership", label: "Leadership" },
     { href: "/spirituality", label: "Spirituality" }
-  ];
+  ] satisfies Array<{ href: Route; label: string }>;
 
   return (
     <Container className="flex min-h-[60vh] flex-col items-center justify-center space-y-6 text-center">

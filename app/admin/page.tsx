@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/container";
@@ -6,12 +5,14 @@ import { Button } from "@/components/ui/button";
 
 const ADMIN_ENABLED = process.env.ADMIN_ENABLED === "true";
 const ADMIN_PASS = process.env.ADMIN_PASS ?? "";
-const TEMPLATE_URL =
+const TEMPLATE_URL = (
   process.env.ADMIN_TEMPLATE_URL ??
-  "https://github.com/sreekaratla81/sreekaratla/tree/main/templates/post.mdx";
-const DOCS_URL =
+  "https://github.com/sreekaratla81/sreekaratla/tree/main/templates/post.mdx"
+) as `http${string}`;
+const DOCS_URL = (
   process.env.ADMIN_DOCS_URL ??
-  "https://github.com/sreekaratla81/sreekaratla#authoring-articles";
+  "https://github.com/sreekaratla81/sreekaratla#authoring-articles"
+) as `http${string}`;
 
 export const runtime = "nodejs";
 
@@ -66,7 +67,7 @@ function AdminCard({
 }: {
   title: string;
   description: string;
-  href: string;
+  href: `http${string}`;
   action: string;
 }) {
   return (
@@ -76,9 +77,9 @@ function AdminCard({
         <p className="text-sm text-foreground/70">{description}</p>
       </div>
       <Button asChild>
-        <Link href={href} target="_blank" rel="noreferrer">
+        <a href={href} target="_blank" rel="noreferrer">
           {action}
-        </Link>
+        </a>
       </Button>
     </div>
   );

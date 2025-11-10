@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Metadata } from "next";
+import type { Metadata, Route } from "next";
 import { draftMode } from "next/headers";
 import type { ReactNode } from "react";
 import { Container } from "@/components/container";
@@ -60,14 +60,18 @@ function TagFilter({
   tags: string[];
   activeTag: string;
 }) {
-  const allHref = `/${track}`;
+  const basePath = `/${track}` as Route;
   return (
     <div className="flex flex-wrap gap-2 text-xs">
-      <FilterLink href={allHref} active={!activeTag}>
+      <FilterLink href={{ pathname: basePath }} active={!activeTag}>
         All tags
       </FilterLink>
       {tags.map((tag) => (
-        <FilterLink key={tag} href={`${allHref}?tag=${encodeURIComponent(tag)}`} active={activeTag === tag}>
+        <FilterLink
+          key={tag}
+          href={{ pathname: basePath, query: { tag } }}
+          active={activeTag === tag}
+        >
           #{tag}
         </FilterLink>
       ))}
@@ -75,7 +79,30 @@ function TagFilter({
   );
 }
 
-function FilterLink({ href, active, children }: { href: string; active: boolean; children: ReactNode }) {
+type InternalHref = { pathname: Route; query?: Record<string, string | string[]> };
+type ExternalHref = `http${string}`;
+
+type FilterLinkProps = { href: InternalHref | ExternalHref; active: boolean; children: ReactNode };
+
+function FilterLink({ href, active, children }: FilterLinkProps) {
+  const isExternal = typeof href === "string";
+  if (isExternal) {
+    return (
+      <a
+        href={href}
+        className={cn(
+          "inline-flex items-center rounded-full border px-3 py-1 font-semibold transition",
+          active
+            ? "border-ring bg-muted text-foreground"
+            : "border-border text-foreground/70 hover:border-ring hover:text-foreground"
+        )}
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        {children}
+      </a>
+    );
+  }
   return (
     <Link
       href={href}

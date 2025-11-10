@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { draftMode } from "next/headers";
 import type { ReactNode } from "react";
@@ -16,7 +16,7 @@ const RESOURCES = [
   { label: "Morning stillness audio", href: "#" },
   { label: "Indian wisdom reading list", href: "#" },
   { label: "Founder breathwork micro-practice", href: "#" }
-];
+] as const;
 const TIPS = [
   "Set a 12-minute window for breath, gratitude, mantra, and preview.",
   "Close every planning session with one reflective question.",
@@ -67,9 +67,9 @@ export default function SpiritualityTrackPage({ searchParams }: Props) {
           <ul className="space-y-2 text-sm text-foreground/70">
             {RESOURCES.map((item) => (
               <li key={item.label}>
-                <Link href={item.href} className="transition hover:text-foreground">
+                <a href={item.href} className="transition hover:text-foreground">
                   {item.label}
-                </Link>
+                </a>
               </li>
             ))}
           </ul>
@@ -98,14 +98,14 @@ function TagFilter({
   tags: string[];
   activeTag: string;
 }) {
-  const base = `/${track}`;
+  const basePath = `/${track}` as Route;
   return (
     <div className="flex flex-wrap gap-2 text-xs">
-      <FilterLink href={base} active={!activeTag}>
+      <FilterLink href={{ pathname: basePath }} active={!activeTag}>
         All tags
       </FilterLink>
       {tags.map((tag) => (
-        <FilterLink key={tag} href={`${base}?tag=${encodeURIComponent(tag)}`} active={activeTag === tag}>
+        <FilterLink key={tag} href={{ pathname: basePath, query: { tag } }} active={activeTag === tag}>
           #{tag}
         </FilterLink>
       ))}
@@ -113,7 +113,34 @@ function TagFilter({
   );
 }
 
-function FilterLink({ href, active, children }: { href: string; active: boolean; children: ReactNode }) {
+type InternalHref = { pathname: Route; query?: Record<string, string | string[]> };
+type ExternalHref = `http${string}` | `#${string}`;
+
+function FilterLink({
+  href,
+  active,
+  children
+}: {
+  href: InternalHref | ExternalHref;
+  active: boolean;
+  children: ReactNode;
+}) {
+  const isExternal = typeof href === "string";
+  if (isExternal) {
+    return (
+      <a
+        href={href}
+        className={cn(
+          "inline-flex items-center rounded-full border px-3 py-1 font-semibold transition",
+          active
+            ? "border-ring bg-muted text-foreground"
+            : "border-border text-foreground/70 hover:border-ring hover:text-foreground"
+        )}
+      >
+        {children}
+      </a>
+    );
+  }
   return (
     <Link
       href={href}
