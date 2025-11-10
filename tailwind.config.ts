@@ -21,7 +21,16 @@ export default {
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))"
+        ring: "hsl(var(--ring))",
+        brand: {
+          bg: "hsl(var(--brand-bg))",
+          fg: "hsl(var(--brand-fg))",
+          ring: "hsl(var(--brand-ring))"
+        },
+        tech: { DEFAULT: "hsl(var(--tech))" },
+        hospitality: { DEFAULT: "hsl(var(--hospitality))" },
+        leadership: { DEFAULT: "hsl(var(--leadership))" },
+        spirituality: { DEFAULT: "hsl(var(--spirituality))" }
       },
       fontFamily: {
         sans: ["Inter", "var(--font-sans)", "system-ui"],

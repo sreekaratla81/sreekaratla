@@ -1,71 +1,80 @@
-import fs from "node:fs/promises";
-import path from "node:path";
-import matter from "gray-matter";
+import fs from "node:fs/promises"
+import path from "node:path"
+import matter from "gray-matter"
 
-const repoRoot = process.cwd();
-const contentDir = path.resolve(repoRoot, "content");
+const repoRoot = process.cwd()
+const contentDir = path.resolve(repoRoot, "content")
 
-/** recursively collect .mdx files under content/ */
+const TRACKS = ["tech", "hospitality", "leadership", "spirituality"]
+
 async function collectMdxFiles(dir) {
-  const out = [];
+  const out = []
   try {
-    const entries = await fs.readdir(dir, { withFileTypes: true });
-    for (const e of entries) {
-      const p = path.join(dir, e.name);
-      if (e.isDirectory()) out.push(...await collectMdxFiles(p));
-      else if (e.isFile() && p.toLowerCase().endsWith(".mdx")) out.push(p);
+    const entries = await fs.readdir(dir, { withFileTypes: true })
+    for (const entry of entries) {
+      const filePath = path.join(dir, entry.name)
+      if (entry.isDirectory()) {
+        out.push(...(await collectMdxFiles(filePath)))
+      } else if (entry.isFile() && filePath.toLowerCase().endsWith('.mdx')) {
+        out.push(filePath)
+      }
     }
-  } catch (err) {
-    // If content directory is missing, do not fail the build—just warn
-    if (err.code === "ENOENT") {
-      console.warn(`[verify:content] content dir not found: ${dir}`);
-      return [];
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      console.warn(`[verify:content] content dir not found: ${dir}`)
+      return []
     }
-    throw err;
+    throw error
   }
-  return out;
+  return out
 }
 
-function normalizeYaml(obj) {
-  // ensure arrays are arrays, coerce scalar types lightly
-  if (typeof obj.tags === "string") obj.tags = [obj.tags];
-  if (obj.tags && !Array.isArray(obj.tags)) obj.tags = [];
-  if (typeof obj.draft !== "boolean") obj.draft = false;
-  return obj;
+function normalizeFrontmatter(data) {
+  if (typeof data.tags === 'string') data.tags = [data.tags]
+  if (data.tags && !Array.isArray(data.tags)) data.tags = []
+  if (typeof data.draft !== 'boolean') data.draft = false
+  return data
 }
 
 async function main() {
-  const files = (await collectMdxFiles(contentDir)).sort((a, b) => a.localeCompare(b));
-  let errors = 0;
+  const files = (await collectMdxFiles(contentDir)).sort((a, b) => a.localeCompare(b))
+  let errors = 0
 
   for (const file of files) {
-    const raw = await fs.readFile(file, "utf8");
+    const raw = await fs.readFile(file, 'utf8')
     try {
-      const gm = matter(raw, { language: "yaml", delimiters: "---" });
-      const data = normalizeYaml(gm.data || {});
-      // Basic required keys for our site
-      const required = ["title", "date", "summary", "slug"];
-      const missing = required.filter(k => !data[k]);
-      if (missing.length) {
-        console.error(`[verify:content] ${path.relative(repoRoot, file)}: missing front-matter keys: ${missing.join(", ")}`);
-        errors++;
+      const fm = matter(raw, { language: 'yaml', delimiters: '---' })
+      const data = normalizeFrontmatter(fm.data || {})
+      const required = ['title', 'description', 'date', 'category']
+      const missing = required.filter((key) => !data[key])
+      if (missing.length > 0) {
+        console.error(
+          `[verify:content] ${path.relative(repoRoot, file)} missing front-matter keys: ${missing.join(', ')}`
+        )
+        errors++
       }
-    } catch (e) {
-      console.error(`[verify:content] ${path.relative(repoRoot, file)}: invalid front-matter: ${e.message}`);
-      errors++;
+      if (data.category && !TRACKS.includes(data.category)) {
+        console.error(
+          `[verify:content] ${path.relative(repoRoot, file)} invalid category '${data.category}'`
+        )
+        errors++
+      }
+    } catch (error) {
+      console.error(`[verify:content] ${path.relative(repoRoot, file)} invalid front-matter: ${error.message}`)
+      errors++
     }
   }
 
   if (errors > 0) {
-    console.error(`[verify:content] ${errors} content issue(s) found`);
-    process.exitCode = 1;
-    return;
+    console.error(`[verify:content] ${errors} content issue(s) found`)
+    process.exitCode = 1
+    return
   }
 
-  console.log(`[verify:content] OK (${files.length} files)`);
+  console.log(`[verify:content] OK (${files.length} files)`)
 }
 
-main().catch((e) => {
-  console.error("[verify:content] Unexpected failure", e);
-  process.exitCode = 1;
-});
+main().catch((error) => {
+  console.error('[verify:content] Unexpected failure', error)
+  process.exitCode = 1
+})

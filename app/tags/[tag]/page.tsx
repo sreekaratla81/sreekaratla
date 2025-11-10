@@ -11,7 +11,7 @@ interface TagPageProps {
 
 export const generateStaticParams = () => {
   const tags = new Set<string>();
-  getAllPosts().forEach((post) => post.tags.forEach((tag) => tags.add(tag)));
+  getAllPosts().forEach((post) => post.tags?.forEach((tag) => tags.add(tag)));
   return Array.from(tags).map((tag) => ({ tag }));
 };
 

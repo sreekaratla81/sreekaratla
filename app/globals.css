@@ -3,29 +3,43 @@
 @tailwind utilities;
 
 :root {
-  --background: 210 33% 99%;
-  --foreground: 222 47% 11%;
-  --muted: 210 20% 95%;
-  --accent: 221 83% 53%;
-  --primary: 221 83% 53%;
+  --brand-bg: 220 14% 96%;
+  --brand-fg: 222 47% 11%;
+  --brand-ring: 222 84% 60%;
+  --background: 220 15% 98%;
+  --foreground: var(--brand-fg);
+  --muted: 220 15% 92%;
+  --accent: var(--brand-ring);
+  --primary: var(--brand-ring);
   --primary-foreground: 0 0% 100%;
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 221 83% 53%;
+  --border: 220 12% 88%;
+  --input: 220 12% 88%;
+  --ring: var(--brand-ring);
+  --tech: 243 75% 59%;
+  --hospitality: 38 92% 56%;
+  --leadership: 152 76% 40%;
+  --spirituality: 258 90% 66%;
   --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-serif: "EB Garamond", "Source Serif Pro", serif;
 }
 
 .dark {
-  --background: 222 47% 11%;
-  --foreground: 210 33% 98%;
-  --muted: 215 27% 17%;
-  --accent: 210 100% 75%;
-  --primary: 210 100% 75%;
+  --brand-bg: 222 40% 8%;
+  --brand-fg: 210 33% 96%;
+  --brand-ring: 222 84% 68%;
+  --background: var(--brand-bg);
+  --foreground: var(--brand-fg);
+  --muted: 222 26% 18%;
+  --accent: var(--brand-ring);
+  --primary: var(--brand-ring);
   --primary-foreground: 222 47% 11%;
-  --border: 215 27% 30%;
-  --input: 215 27% 30%;
-  --ring: 210 100% 75%;
+  --border: 222 20% 26%;
+  --input: 222 20% 26%;
+  --ring: var(--brand-ring);
+  --tech: 245 85% 72%;
+  --hospitality: 39 94% 64%;
+  --leadership: 152 65% 55%;
+  --spirituality: 258 82% 74%;
 }
 
 body {
@@ -36,4 +50,10 @@ body {
 
 .prose {
   font-family: var(--font-serif);
+}
+
+@layer base {
+  * {
+    @apply antialiased;
+  }
 }

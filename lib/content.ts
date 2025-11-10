@@ -1,85 +1,112 @@
-import { compareDesc } from "date-fns";
-import { allPosts, Post } from "contentlayer/generated";
+import { compareDesc } from 'date-fns'
+import { allPosts, Post } from 'contentlayer/generated'
 
-const TRACKS = ["tech", "hospitality", "conscious-leadership"] as const;
+export const TRACKS = ['tech', 'hospitality', 'leadership', 'spirituality'] as const
 
-export type PostType = (typeof TRACKS)[number];
+export type Track = (typeof TRACKS)[number]
 
-const normalizePath = (value?: string) => (value ?? "").replace(/\\+/g, "/");
+type Options = { includeDrafts?: boolean }
 
-const isPostType = (value: string | undefined): value is PostType =>
-  value != null && (TRACKS as readonly string[]).includes(value);
+const normalizePath = (value?: string) => (value ?? '').replace(/\\+/g, '/')
 
-export const resolvePostType = (post: Post): PostType => {
-  if (isPostType(post.type)) return post.type;
-  const flattened = normalizePath(post._raw.flattenedPath).split("/").filter(Boolean);
-  const fromFlattened = flattened[0];
-  if (isPostType(fromFlattened)) return fromFlattened;
-  const dir = normalizePath(post._raw.sourceFileDir).split("/").filter(Boolean);
-  const fromDir = dir[0];
-  if (isPostType(fromDir)) return fromDir;
-  return TRACKS[0];
-};
-
-const filterDrafts = (post: Post, includeDrafts: boolean) => {
-  if (includeDrafts) return true;
-  if (post.draft && process.env.NODE_ENV === "production") {
-    return false;
+const resolveTrack = (post: Post): Track => {
+  const fromComputed = post.track as Track | undefined
+  if (fromComputed && (TRACKS as readonly string[]).includes(fromComputed)) {
+    return fromComputed
   }
-  return true;
-};
 
-export const getAllPosts = (options: { includeDrafts?: boolean } = {}) =>
+  const flattened = normalizePath(post._raw.flattenedPath).split('/')[0]
+  if ((TRACKS as readonly string[]).includes(flattened)) {
+    return flattened as Track
+  }
+
+  throw new Error(`Unable to resolve track for ${post._id}`)
+}
+
+const isPublished = (post: Post) => {
+  const publishedDate = new Date(post.date)
+  const now = new Date()
+  return !post.draft && publishedDate.getTime() <= now.getTime()
+}
+
+const filterVisibility = (post: Post, includeDrafts: boolean) => {
+  if (includeDrafts) return true
+  return isPublished(post)
+}
+
+export const getAllPosts = ({ includeDrafts = false }: Options = {}) =>
   allPosts
-    .filter((post) => filterDrafts(post, options.includeDrafts ?? false))
-    .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
+    .filter((post) => filterVisibility(post, includeDrafts))
+    .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
 
-export const getPostsByType = (type: PostType, options: { includeDrafts?: boolean } = {}) =>
-  getAllPosts(options).filter((post) => resolvePostType(post) === type);
+type TrackOptions = Options & { track?: Track }
 
-export const getPostBySlug = (slug: string, options: { includeDrafts?: boolean } = {}) =>
-  getAllPosts(options).find((post) => post.slug === slug);
+export const getPostsByTrack = (track: Track, options?: Options) =>
+  getAllPosts(options).filter((post) => resolveTrack(post) === track)
 
-export const getPostsByTag = (tag: string, options: { includeDrafts?: boolean } = {}) =>
-  getAllPosts(options).filter((post) => post.tags.includes(tag));
+export const getPostByParams = (
+  category: string,
+  slug: string,
+  { includeDrafts = false }: Options = {}
+) =>
+  getAllPosts({ includeDrafts }).find(
+    (post) => resolveTrack(post) === category && post.slug === slug
+  )
 
-export const getPostsBySeries = (series: string, options: { includeDrafts?: boolean } = {}) =>
-  getAllPosts(options).filter((post) => post.series?.includes(series));
+export const getPostBySlug = (slug: string, options?: Options) =>
+  getAllPosts(options).find((post) => post.slug === slug)
 
-export const getTags = (options: { includeDrafts?: boolean } = {}) => {
-  const tagSet = new Set<string>();
-  getAllPosts(options).forEach((post) => post.tags.forEach((tag) => tagSet.add(tag)));
-  return Array.from(tagSet).sort((a, b) => a.localeCompare(b));
-};
+export const getPostsByTag = (tag: string, { includeDrafts = false, track }: TrackOptions = {}) =>
+  getAllPosts({ includeDrafts }).filter((post) => {
+    const matchesTag = post.tags?.includes(tag)
+    const matchesTrack = track ? resolveTrack(post) === track : true
+    return Boolean(matchesTag) && matchesTrack
+  })
 
-export const getSeries = (options: { includeDrafts?: boolean } = {}) => {
-  const seriesSet = new Set<string>();
-  getAllPosts(options).forEach((post) => {
-    post.series?.forEach((value) => seriesSet.add(value));
-  });
-  return Array.from(seriesSet).sort((a, b) => a.localeCompare(b));
-};
+export const getTags = ({ includeDrafts = false, track }: TrackOptions = {}) => {
+  const tagSet = new Set<string>()
+  getAllPosts({ includeDrafts }).forEach((post) => {
+    if (track && resolveTrack(post) !== track) return
+    post.tags?.forEach((tag) => tagSet.add(tag))
+  })
+  return Array.from(tagSet).sort((a, b) => a.localeCompare(b))
+}
 
-export const getAdjacentPosts = (post: Post, options: { includeDrafts?: boolean } = {}) => {
-  const trackPosts = getPostsByType(resolvePostType(post), options);
-  const currentIndex = trackPosts.findIndex((item) => item.slug === post.slug);
+export const getFeaturedPosts = ({ includeDrafts = false, track }: TrackOptions = {}) =>
+  getAllPosts({ includeDrafts }).filter((post) => {
+    if (!post.featured) return false
+    if (track) return resolveTrack(post) === track
+    return true
+  })
+
+export const getAdjacentPosts = (current: Post, { includeDrafts = false }: Options = {}) => {
+  const track = resolveTrack(current)
+  const posts = getPostsByTrack(track, { includeDrafts })
+  const index = posts.findIndex((post) => post._id === current._id)
   return {
-    previous: currentIndex < trackPosts.length - 1 ? trackPosts[currentIndex + 1] : undefined,
-    next: currentIndex > 0 ? trackPosts[currentIndex - 1] : undefined
-  };
-};
+    previous: index < posts.length - 1 ? posts[index + 1] : undefined,
+    next: index > 0 ? posts[index - 1] : undefined
+  }
+}
 
-export const getRelatedPosts = (post: Post, limit = 3, options: { includeDrafts?: boolean } = {}) => {
-  const tags = new Set(post.tags);
-  const track = resolvePostType(post);
-  return getPostsByType(track, options)
-    .filter((item) => item.slug !== post.slug)
-    .map((item) => ({
-      post: item,
-      score: item.tags.reduce((acc, tag) => acc + (tags.has(tag) ? 1 : 0), 0)
+export const getRelatedPosts = (current: Post, limit = 3, options?: Options) => {
+  const tags = new Set(current.tags ?? [])
+  if (tags.size === 0) return []
+
+  return getPostsByTrack(resolveTrack(current), options)
+    .filter((post) => post._id !== current._id)
+    .map((post) => ({
+      post,
+      score: post.tags?.reduce((acc, tag) => acc + (tags.has(tag) ? 1 : 0), 0) ?? 0
     }))
     .filter((entry) => entry.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
-    .map((entry) => entry.post);
-};
+    .map((entry) => entry.post)
+}
+
+export const isDraftPost = (post: Post) => post.draft ?? false
+
+export const isFutureDated = (post: Post) => new Date(post.date).getTime() > Date.now()
+
+export { resolveTrack }

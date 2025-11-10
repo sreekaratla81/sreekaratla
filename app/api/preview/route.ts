@@ -1,18 +1,25 @@
-export const runtime = "edge";
-
 import { draftMode } from "next/headers";
-import { NextResponse } from "next/server";
+import { redirect } from "next/navigation";
+import type { NextRequest } from "next/server";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const secret = process.env.CONTENT_PREVIEW_SECRET;
-  if (!secret || searchParams.get("secret") !== secret) {
-    return new NextResponse("Invalid preview token", { status: 401 });
+const PREVIEW_TOKEN = process.env.PREVIEW_TOKEN;
+
+export async function GET(request: NextRequest) {
+  const url = new URL(request.url);
+  const mode = url.searchParams.get("mode");
+  const token = url.searchParams.get("token");
+  const redirectTo = url.searchParams.get("redirect") ?? "/";
+  const destination = redirectTo.startsWith("/") ? redirectTo : "/";
+
+  if (mode === "disable") {
+    draftMode().disable();
+    return redirect(destination);
+  }
+
+  if (!PREVIEW_TOKEN || token !== PREVIEW_TOKEN) {
+    return new Response("Invalid preview token", { status: 401 });
   }
 
   draftMode().enable();
-
-  const redirectUrl = searchParams.get("slug") ? `/writing/${searchParams.get("slug")}` : "/";
-
-  return NextResponse.redirect(new URL(`${redirectUrl}?preview=1`, request.url));
+  return redirect(destination);
 }
