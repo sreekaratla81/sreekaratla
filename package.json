@@ -21,7 +21,11 @@
     "verify:content": "node scripts/verify-content.mjs",
     "deploy": "node scripts/cf-deploy-guard.mjs",
     "gen:rss": "node scripts/gen-rss.mjs",
-    "gen:sitemap": "next-sitemap"
+    "gen:sitemap": "next-sitemap",
+    "check:links": "node scripts/check-links.mjs",
+    "test": "pnpm test:build && pnpm test:run",
+    "test:build": "tsc --project tsconfig.tests.json",
+    "test:run": "node --test --experimental-test-module-mocks \".tests-dist/**/*.test.js\""
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

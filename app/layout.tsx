@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { buildMetadata } from "@/lib/seo";
-import { Header } from "@/components/header";
+import { SiteHeader } from "@/components/site-header";
 import { Footer } from "@/components/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@/components/analytics";
@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-background text-foreground">
         <ThemeProvider>
           <div className="flex min-h-screen flex-col">
-            <Header />
+            <SiteHeader />
             <main className="flex-1 bg-background/95">{children}</main>
             <Footer />
           </div>

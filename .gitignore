@@ -40,3 +40,4 @@ pagefind_indices
 public/rss.xml
 public/rss
 public/sitemap-*.xml
+.tests-dist
