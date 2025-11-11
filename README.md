@@ -2,21 +2,37 @@
 
 A polished personal site for Sreekar Atla built with Next.js App Router, MDX (Contentlayer), Tailwind, and shadcn-inspired components. The experience is organised around four tracks—Tech, Hospitality, Leadership, and Spirituality—so new articles slot into the right surface automatically.
 
-## ✨ Highlights
-- Four dedicated track hubs with tag filters and featured article cards.
-- MDX authoring via Contentlayer with scheduling (`date > now`) and draft support.
-- Resume-forward hero with prominent CTAs (Download Resume, Hire Me, Browse Articles, Newsletter).
-- Draft preview workflow (`/api/preview?token=...`) and optional `/admin` helper dashboard gated by headers.
-- Calm stone/indigo/amber/emerald/violet palette with accessible contrast and keyboard focus states.
-- RSS feeds, sitemap, robots, and Open Graph metadata ready for SEO.
-- Basic test suite (Node test runner + React SSR) and external link checker.
+## TL;DR
+- Four track-specific hubs with tag filters, featured article cards, and a resume-forward hero that keeps CTAs (Download Resume, Hire Me, Browse Articles, Newsletter) prominent.
+- Contentlayer-powered MDX workflow with scheduling (`date > now`), draft mode previews, and a header-gated `/admin` helper dashboard.
+- Production-ready polish: accessible stone/indigo/amber/emerald/violet palette, SEO metadata (RSS, sitemap, robots), and a basic Node test suite plus external link checker.
 
-## 🚀 Getting started
+## Quickstart
+
+### Install & bootstrap
 ```bash
 pnpm install
+```
+
+### Run the local dev server
+```bash
 pnpm dev
 ```
 Open [http://localhost:3000](http://localhost:3000) to explore the site.
+
+### Run the test suite
+```bash
+pnpm test
+```
+The underlying scripts also support `pnpm test:build` (compile to `.tests-dist/`) and `pnpm test:run` (execute with `node --test`) if you prefer the split phases.
+
+### Additional project checks
+```bash
+pnpm lint        # Next.js lint rules
+pnpm typecheck   # TypeScript project check
+pnpm check:links # Verify external links respond (HEAD requests)
+pnpm build       # Production build (Contentlayer + Next.js)
+```
 
 ### Environment variables (`.env.local`)
 | Variable | Purpose |
@@ -33,16 +49,18 @@ Open [http://localhost:3000](http://localhost:3000) to explore the site.
 | `ADMIN_PASS` | Shared secret sent through the `x-admin-pass` header to view `/admin`. |
 | `ADMIN_TEMPLATE_URL`, `ADMIN_DOCS_URL` | Optional overrides for links shown on the admin page. |
 
-### Useful scripts
-```bash
-pnpm lint          # Next.js lint rules
-pnpm typecheck     # TypeScript project check
-pnpm test          # Compile and run Node-based component tests
-pnpm check:links   # Verify external links respond (HEAD requests)
-pnpm build         # Production build (Contentlayer + Next.js)
-```
+## Project Map
+- `app/` – Next.js App Router entrypoints for the marketing site, track hubs, RSS feeds, and API routes (preview/admin).
+- `components/` – Shared UI built with Tailwind and shadcn-inspired primitives.
+- `content/` – MDX articles grouped into `tech`, `hospitality`, `leadership`, and `spirituality` tracks plus shared images.
+- `lib/` – Utilities for Contentlayer, SEO metadata, analytics, and site-wide configuration.
+- `scripts/` – Maintenance utilities including `verify-content.mjs` and the external link checker.
+- `templates/` – Authoring templates for new content (`post.mdx`).
+- `tests/` – Node-based SSR tests covering navigation, marketing cards, and breadcrumbs.
 
-## 📝 Authoring articles
+## Common Tasks
+
+### Authoring articles
 1. Copy `templates/post.mdx` into `content/<track>/` where `<track>` is one of `tech`, `hospitality`, `leadership`, or `spirituality`.
 2. Update the frontmatter. All fields are validated by Contentlayer and `scripts/verify-content.mjs`.
 
@@ -61,34 +79,29 @@ hero: "/images/ai-roadmap-layers.svg" # optional local asset
 ---
 ```
 
-A few guardrails:
+Guardrails:
 - The `category` must match the folder name; Contentlayer throws if it differs.
 - Posts with `draft: true` or a future `date` are hidden unless preview mode is enabled.
 - Set `featured: true` to promote an article in the home/track cards.
 - Place hero artwork under `content/images/` or reference external SVG/PNG assets.
 
-### Previewing drafts & scheduled posts
+### Preview drafts & scheduled posts
 1. Set `PREVIEW_TOKEN` in `.env.local`.
 2. Visit `/api/preview?token=<PREVIEW_TOKEN>&redirect=/tech` to enable draft mode and redirect back to a page.
 3. Exit preview with `/api/preview?mode=disable` (optionally pass `redirect` again).
 
-### Admin helper (optional)
+### Use the optional admin helper
 If you set `ADMIN_ENABLED=true` and provide `ADMIN_PASS`, a tiny dashboard is available at `/admin`. Supply the header `x-admin-pass: <ADMIN_PASS>` (e.g. via [ModHeader](https://modheader.com/)) to reveal quick links to the MDX template and authoring docs.
 
-## 🧪 Tests
-The project uses Node's built-in test runner with server-rendered components.
-```bash
-pnpm test:build  # transpile tests to .tests-dist/
-pnpm test:run    # execute using node --test
-```
-Tests cover the site header navigation, marketing homepage track cards/CTAs, and article breadcrumbs.
-
-## 🔗 Link checking
-`pnpm check:links` sends `HEAD` requests to the external profiles listed in `scripts/external-links.json`. Update the list as new external destinations are added. The script exits non-zero if any URL fails.
-
-## 📦 Build & deploy
+### Build & deploy
 - `pnpm build` runs Contentlayer, Next.js build, and the postbuild RSS/sitemap generators.
 - Deploy on Vercel or Cloudflare Pages (the site is fully static once built). Ensure `SITE_URL` reflects the production domain so `sitemap.xml` and metadata stay accurate.
+
+## Troubleshooting
+- **Tests or typechecks fail after editing content** – run `pnpm test`, `pnpm lint`, and `pnpm typecheck` locally to surface validation errors, then inspect the reported MDX file. `scripts/verify-content.mjs` points to invalid frontmatter.
+- **`pnpm check:links` exits non-zero** – confirm the URLs in `scripts/external-links.json` respond to `HEAD`; update or remove stale links before re-running the command.
+- **Draft previews not working** – ensure `PREVIEW_TOKEN` in `.env.local` matches the token passed to `/api/preview` and that cookies are not blocked in your browser.
+- **Admin dashboard hidden** – confirm `ADMIN_ENABLED=true` and send `x-admin-pass: <ADMIN_PASS>` in the request headers. Tools like ModHeader make this easy during local development.
 
 ## 📊 Lighthouse (reference)
 Local mobile Lighthouse on Chrome 123 emulating Pixel 5: **Performance 97 / Accessibility 100 / Best Practices 100 / SEO 100**.
