@@ -1,3 +1,7 @@
+# Onboarding checklist
+
+- Review the [First contribution idea for `/api/search` caching](docs/first-pr.md) to explore a scoped starter task and the required checks.
+
 # Onboarding guide
 
 Welcome to the sreekaratla.com project! This guide covers the local environment, how to run the app, and a few project-specific concepts so you can ship confidently.
