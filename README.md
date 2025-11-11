@@ -18,7 +18,7 @@ pnpm install
 ```bash
 pnpm dev
 ```
-Open [http://localhost:3000](http://localhost:3000) to explore the site.
+Open [http://localhost:3000](http://localhost:3000) to explore the site. Consult the [API reference](docs/api/README.md) for details on the `/api/search` and `/api/preview` helpers.
 
 ### Run the test suite
 ```bash
