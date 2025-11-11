@@ -21,7 +21,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur">
       <Container className="flex items-center justify-between gap-6 py-4">
         <div className="flex flex-1 items-center gap-4">
-          <Link href="/" className="flex items-center gap-3" onClick={close}>
+          <Link href={"/" as Route} className="flex items-center gap-3" onClick={close}>
             <div className="flex flex-col">
               <span className="text-lg font-semibold tracking-tight text-foreground">{siteConfig.name}</span>
               <span className="text-xs font-medium uppercase tracking-[0.18em] text-foreground/60">

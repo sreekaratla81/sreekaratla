@@ -1,10 +1,14 @@
 import Link from "next/link";
+import type { Route } from "next";
 import { cn } from "@/lib/utils";
 
 export function TagBadge({ tag, className }: { tag: string; className?: string }) {
   return (
     <Link
-      href={`/tags/${tag}`}
+      href={{
+        pathname: "/tags/[tag]" as Route,
+        query: { tag }
+      }}
       className={cn(
         "inline-flex items-center rounded-full border border-border px-3 py-1 text-xs font-medium text-foreground/80 transition hocus:border-accent hocus:text-accent",
         className
