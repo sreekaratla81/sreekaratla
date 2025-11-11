@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Route } from "next";
 import { Briefcase, Github, Linkedin, Newspaper } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/lib/config";
@@ -33,7 +34,7 @@ export function Hero() {
               </a>
             </Button>
             <Button asChild variant="ghost">
-              <Link href="/tech">Browse Articles</Link>
+              <Link href={"/tech" as Route}>Browse Articles</Link>
             </Button>
             <Button asChild variant="ghost">
               <a href="#newsletter">

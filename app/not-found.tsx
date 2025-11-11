@@ -3,13 +3,13 @@ import Link from "next/link";
 import { Container } from "@/components/container";
 
 export default function NotFound() {
-  const links = [
-    { href: "/", label: "Home" },
-    { href: "/tech", label: "Tech" },
-    { href: "/hospitality", label: "Hospitality" },
-    { href: "/leadership", label: "Leadership" },
-    { href: "/spirituality", label: "Spirituality" }
-  ] satisfies Array<{ href: Route; label: string }>;
+  const links: Array<{ href: Route; label: string }> = [
+    { href: "/" as Route, label: "Home" },
+    { href: "/tech" as Route, label: "Tech" },
+    { href: "/hospitality" as Route, label: "Hospitality" },
+    { href: "/leadership" as Route, label: "Leadership" },
+    { href: "/spirituality" as Route, label: "Spirituality" }
+  ];
 
   return (
     <Container className="flex min-h-[60vh] flex-col items-center justify-center space-y-6 text-center">
