@@ -16,7 +16,7 @@ A polished personal site for Sreekar Atla built with Next.js App Router, MDX (Co
 pnpm install
 pnpm dev
 ```
-Open [http://localhost:3000](http://localhost:3000) to explore the site.
+Open [http://localhost:3000](http://localhost:3000) to explore the site. Consult the [API reference](docs/api/README.md) for details on the `/api/search` and `/api/preview` helpers.
 
 ### Environment variables (`.env.local`)
 | Variable | Purpose |
