@@ -1,4 +1,5 @@
-name: build
+# Status check name for branch protection: build
+name: CI
 on:
   pull_request:
   push: { branches: [ main ] }
